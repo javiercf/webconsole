@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  form(action="." method="post" name="commandForm")
+    input(type="text" name="command")
+    button(type="submit") Enviar
+  script(src="https://cdn.socket.io/socket.io-1.4.5.js")
+  script.
+    var form = document.forms['commandForm'];
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var data = {
+        command: form.command.value
+      };
+      var req = new XMLHttpRequest();
+      req.onload = function(e) {
+        console.log(e.target.response);
+      }
+      req.open('POST', form.action, true);
+      req.setRequestHeader("Content-type", "application/json");
+      req.send(JSON.stringify(data));
+    });
+    var socket = io.connect('http://localhost:3001');
+    socket.on('test', function(data){
+      console.log(data);
+    });
